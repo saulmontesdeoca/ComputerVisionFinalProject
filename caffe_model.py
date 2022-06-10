@@ -1,3 +1,6 @@
+# Questions:
+# 3. Do I begin work on preprocessing and detection after the 'image' variable is created?
+
 import cv2
 import time
 import numpy as np
@@ -20,6 +23,8 @@ while cap.isOpened():
     if ret:
         image = frame
 
+        # HERE
+
         cv2.imshow('image', image)
         out.write(image)  # Write the frame into the output video file
 
@@ -31,6 +36,6 @@ while cap.isOpened():
         break
 
 cap.release()
-# out.release()
+out.release()
 
 cv2.destroyAllWindows()
