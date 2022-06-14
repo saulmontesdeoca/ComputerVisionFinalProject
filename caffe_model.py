@@ -1,9 +1,18 @@
-# Questions:
-# 3. Do I begin work on preprocessing and detection after the 'image' variable is created?
-
 import cv2
 import time
 import numpy as np
+import argparse
+
+parser = argparse.ArgumentParser(description='Caffe model file')
+
+parser.add_argument('-v', '--analyze_video',
+                    help='The video to be analyzed', required=True)
+
+args = parser.parse_args()
+
+if args.analyze_video != 'input/video_1.mp4' and args.analyze_video != 'input/video_2.mp4' and args.analyze_video != 'input/video_3.mp4':
+    print("ERROR: Didn't include a video name.")
+    exit()
 
 # Create a VideoCapture object to read from the given video file
 cap = cv2.VideoCapture('input/video_1.mp4')
