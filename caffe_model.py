@@ -5,25 +5,36 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Caffe model file')
 
-parser.add_argument('-v', '--analyze_video',
+parser.add_argument('-i', '--input_video',
                     help='The video to be analyzed', required=True)
 
 args = parser.parse_args()
 
-if args.analyze_video != 'input/video_1.mp4' and args.analyze_video != 'input/video_2.mp4' and args.analyze_video != 'input/video_3.mp4':
-    print("ERROR: Didn't include a video name.")
+if (args.input_video != 'video_1.mp4') and (args.input_video != 'video_2.mp4') and (args.input_video != 'video_3.mp4'):
+    print("ERROR: Didn't include an appropiate input video name.")
     exit()
 
+video_in = 'input/' + args.input_video
+
+if '1' in args.input_video:
+    video_out = 'output/video_result_1.mp4'
+
+if '2' in args.input_video:
+    video_out = 'output/video_result_2.mp4'
+
+if '3' in args.input_video:
+    video_out = 'output/video_result_3.mp4'
+
 # Create a VideoCapture object to read from the given video file
-cap = cv2.VideoCapture('input/video_1.mp4')
+cap = cv2.VideoCapture(video_in)
 
 # Get the video frames' width and height for proper saving of videos
 frame_width = int(cap.get(3))
 frame_height = int(cap.get(4))
 
 # Create a VideoWriter object to write an output video with the given specs
-out = cv2.VideoWriter('output/video_result_1.mp4',
-                      cv2.VideoWriter_fourcc(*'mp4v'), 30, (frame_width, frame_height))
+out = cv2.VideoWriter(video_out, cv2.VideoWriter_fourcc(
+    *'mp4v'), 30, (frame_width, frame_height))
 
 # Detect objects in each frame of the video
 while cap.isOpened():
