@@ -1,7 +1,3 @@
-# Do I need to convert the video frames to RGB?
-# Is showing each analyzed frame slowing down the making of the output video?
-# Any hint on how to configure the network?
-
 import cv2
 import time
 import numpy as np
@@ -70,9 +66,13 @@ while cap.isOpened():
         image = frame
 
         # HERE
-        # rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        h, w = image.shape[:2]
-        blob = cv2.dnn.blobFromImage(image, 1.0, (300, 300))
+        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        h, w = rgb_image.shape[:2]
+
+        # mean: A scalar with mean values which are subtracted from each color channel
+        # scalefactor: A float that represents how zoomed in the image is
+        blob = cv2.dnn.blobFromImage(image=rgb_image, size=(
+            300, 300), scalefactor=1.0, swapRB=False)
 
         net.setInput(blob)
         detections = net.forward()
@@ -88,14 +88,17 @@ while cap.isOpened():
 
                 label = "{}: {:.2f}%".format(classes[idx], confidence * 100)
 
-                cv2.rectangle(image, (startX, startY),
+                cv2.rectangle(rgb_image, (startX, startY),
                               (endX, endY), colors[idx], 2)
                 y = startY - 15 if startY - 15 > 15 else startY + 15
-                cv2.putText(image, label, (startX, y),
+                cv2.putText(rgb_image, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, colors[idx], 2)
 
-        cv2.imshow('image', image)
-        out.write(image)  # Write the frame into the output video file
+        # If the frame is converted to rgb, change it to bgr here
+        bgr_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
+        cv2.imshow('image', bgr_image)
+
+        out.write(bgr_image)  # Write the frame into the output video file
 
         # Press 'q' to exit
         if cv2.waitKey(10) & 0xFF == ord('q'):
