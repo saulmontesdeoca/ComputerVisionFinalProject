@@ -4,14 +4,14 @@ import argparse
 import numpy as np
 
 # Code to generate the model
-with open("files/object_detection_classes_coco.txt", "r") as f:
+with open("object_detection_classes_coco.txt", "r") as f:
     class_names = f.read().split("\n")
 
 # get a different color array for each of the classes
 COLORS = np.random.uniform(0, 255, size=(len(class_names), 3))
 
 # load the DNN model
-yolo_model = cv2.dnn.readNetFromDarknet("files/yolov3.cfg", "files/yolov3.weights")
+yolo_model = cv2.dnn.readNetFromDarknet("yolov3.cfg", "yolov3.weights")
 
 ln = yolo_model.getLayerNames()
 ln = [ln[i - 1] for i in yolo_model.getUnconnectedOutLayers()]
@@ -21,10 +21,10 @@ print(ln)
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video", required=True, help="Archivo de video")
-args = vars(ap.parse_args())
+args = ap.parse_args()
 
 
-cap = cv2.VideoCapture(args["video"])
+cap = cv2.VideoCapture('input/' + args.video)
 
 # get the video frames' width and height for proper saving of videos
 frame_width = int(cap.get(3))
@@ -60,7 +60,8 @@ while cap.isOpened():
         ) = colorimage_e.shape  # get height and width of image
 
         # add blob to the preprocessed image
-        blob = cv2.dnn.blobFromImage(colorimage_e, 1 / 255.0, (416, 416), crop=False)
+        blob = cv2.dnn.blobFromImage(
+            colorimage_e, 1 / 255.0, (416, 416), crop=False)
         yolo_model.setInput(blob)
         layerOutputs = yolo_model.forward(ln)
 
