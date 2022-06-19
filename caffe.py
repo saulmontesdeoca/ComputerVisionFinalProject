@@ -67,23 +67,26 @@ while cap.isOpened():
 
         # HERE
         rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        hsv_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2HSV)
+        rgb_image = cv2.resize(rgb_image, (700, 700))
 
-        H, S, V = cv2.split(hsv_image)
+        R, G, B = cv2.split(rgb_image)
 
-        eq_H = cv2.equalizeHist(H)
-        eq_S = cv2.equalizeHist(S)
-        eq_V = cv2.equalizeHist(V)
+        eq_R = cv2.equalizeHist(R)
+        eq_G = cv2.equalizeHist(G)
+        eq_B = cv2.equalizeHist(B)
 
-        hsv_image_eq = cv2.merge([H, eq_S, eq_V])
-        image_eq_rgb = cv2.cvtColor(hsv_image_eq, cv2.COLOR_HSV2RGB)
+        rgb_image_eq = cv2.merge([eq_R, eq_G, eq_B])
 
-        h, w = image_eq_rgb.shape[:2]
+        h, w = rgb_image_eq.shape[:2]
+
+        red_values_mean = np.mean(rgb_image_eq[:, :, 0])
+        green_values_mean = np.mean(rgb_image_eq[:, :, 1])
+        blue_values_mean = np.mean(rgb_image_eq[:, :, 2])
 
         # mean: A scalar with mean values which are subtracted from each color channel
         # scalefactor: A float that represents how zoomed in the image is
-        blob = cv2.dnn.blobFromImage(image=rgb_image, size=(
-            300, 300), scalefactor=0.07, swapRB=False, mean=(50, 50, 50))
+        blob = cv2.dnn.blobFromImage(image=rgb_image, size=(600, 600), swapRB=False, mean=(
+            red_values_mean, green_values_mean, blue_values_mean))
 
         net.setInput(blob)
         detections = net.forward()
@@ -99,14 +102,14 @@ while cap.isOpened():
 
                 label = "{}: {:.2f}%".format(classes[idx], confidence * 100)
 
-                cv2.rectangle(image_eq_rgb, (startX, startY),
+                cv2.rectangle(rgb_image_eq, (startX, startY),
                               (endX, endY), colors[idx], 2)
                 y = startY - 15 if startY - 15 > 15 else startY + 15
-                cv2.putText(image_eq_rgb, label, (startX, y),
+                cv2.putText(rgb_image_eq, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, colors[idx], 2)
 
         # If the frame is converted to rgb, change it to bgr here
-        bgr_image = cv2.cvtColor(image_eq_rgb, cv2.COLOR_RGB2BGR)
+        bgr_image = cv2.cvtColor(rgb_image_eq, cv2.COLOR_RGB2BGR)
         cv2.imshow('image', bgr_image)
 
         out.write(bgr_image)  # Write the frame into the output video file
