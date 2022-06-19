@@ -67,12 +67,23 @@ while cap.isOpened():
 
         # HERE
         rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        h, w = rgb_image.shape[:2]
+        hsv_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2HSV)
+
+        H, S, V = cv2.split(hsv_image)
+
+        eq_H = cv2.equalizeHist(H)
+        eq_S = cv2.equalizeHist(S)
+        eq_V = cv2.equalizeHist(V)
+
+        hsv_image_eq = cv2.merge([H, eq_S, eq_V])
+        image_eq_rgb = cv2.cvtColor(hsv_image_eq, cv2.COLOR_HSV2RGB)
+
+        h, w = image_eq_rgb.shape[:2]
 
         # mean: A scalar with mean values which are subtracted from each color channel
         # scalefactor: A float that represents how zoomed in the image is
         blob = cv2.dnn.blobFromImage(image=rgb_image, size=(
-            300, 300), scalefactor=1.0, swapRB=False)
+            300, 300), scalefactor=0.07, swapRB=False, mean=(50, 50, 50))
 
         net.setInput(blob)
         detections = net.forward()
@@ -88,14 +99,14 @@ while cap.isOpened():
 
                 label = "{}: {:.2f}%".format(classes[idx], confidence * 100)
 
-                cv2.rectangle(rgb_image, (startX, startY),
+                cv2.rectangle(image_eq_rgb, (startX, startY),
                               (endX, endY), colors[idx], 2)
                 y = startY - 15 if startY - 15 > 15 else startY + 15
-                cv2.putText(rgb_image, label, (startX, y),
+                cv2.putText(image_eq_rgb, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, colors[idx], 2)
 
         # If the frame is converted to rgb, change it to bgr here
-        bgr_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
+        bgr_image = cv2.cvtColor(image_eq_rgb, cv2.COLOR_RGB2BGR)
         cv2.imshow('image', bgr_image)
 
         out.write(bgr_image)  # Write the frame into the output video file
