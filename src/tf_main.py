@@ -32,6 +32,7 @@ mobile_net_model = cv2.dnn.readNet(model='models/frozen_inference_graph.pb',
 
 def preprocessImg(img):
     image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # image = cv2.resize(image, (int(img.shape[0]*1.3), int(img.shape[1]*1.3)))
     image = cv2.resize(image, (700, 700))
     image = equalize_RGB(image)
     return image
@@ -108,8 +109,7 @@ while cap.isOpened():
     ret, frame = cap.read()
 
     if ret:
-        image_eq = equalize_RGB(frame)
-        image_boxes = getFrameWithBoxes(image_eq)
+        image_boxes = getFrameWithBoxes(frame)
 
         cv2.imshow('image', image_boxes)
         out.write(image_boxes)
