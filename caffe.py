@@ -22,13 +22,13 @@ if (args.input_video != 'video_1.mp4') and (args.input_video != 'video_2.mp4') a
 video_in = 'input/' + args.input_video
 
 if '1' in args.input_video:
-    video_out = 'output/video_result_1.mp4'
+    video_out = 'output/caffe_video_result_1.mp4'
 
 if '2' in args.input_video:
-    video_out = 'output/video_result_2.mp4'
+    video_out = 'output/caffe_video_result_2.mp4'
 
 if '3' in args.input_video:
-    video_out = 'output/video_result_3.mp4'
+    video_out = 'output/caffe_video_result_3.mp4'
 
 # File with a text description of the network architecture
 prototxt = 'caffe_files/deploy.prototxt'
