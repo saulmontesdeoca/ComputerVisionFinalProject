@@ -1,3 +1,5 @@
+# Sergio Hernandez Castillo - A01025210
+
 import cv2
 import time
 import numpy as np
@@ -85,7 +87,7 @@ while cap.isOpened():
 
         # mean: A scalar with mean values which are subtracted from each color channel
         # scalefactor: A float that represents how zoomed in the image is
-        blob = cv2.dnn.blobFromImage(image=rgb_image, size=(600, 600), swapRB=False, mean=(
+        blob = cv2.dnn.blobFromImage(image=rgb_image, size=(700, 700), swapRB=False, mean=(
             red_values_mean, green_values_mean, blue_values_mean))
 
         net.setInput(blob)
